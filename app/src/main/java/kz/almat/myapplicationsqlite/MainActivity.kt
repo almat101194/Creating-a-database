@@ -20,6 +20,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener  {
         btnAdd.setOnClickListener(this)
         btnRead.setOnClickListener(this)
         btnClear.setOnClickListener(this)
+        btnUpd.setOnClickListener(this)
+        btnDel.setOnClickListener(this)
 
         dbHelper = DBHelper(this)
     }
@@ -28,6 +30,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener  {
 
         var name = etName.text.toString()
         var email = etEmail.text.toString()
+        var id = etID.text.toString()
 
         var database: SQLiteDatabase = dbHelper.writableDatabase
 
@@ -62,6 +65,25 @@ class MainActivity : AppCompatActivity(), View.OnClickListener  {
             }
             R.id.btnClear -> {
                 database.delete(DBHelper.TABLE_CONTACTS, null, null)
+            }
+            R.id.btnUpd -> {
+                if (id.equals("")) {
+                    return
+                }
+                contentValues.put(DBHelper.KEY_MAIL, email)
+                contentValues.put(DBHelper.KEY_NAME, name)
+                var updCount: Int = database.update(DBHelper.TABLE_CONTACTS, contentValues,
+                                    DBHelper.KEY_ID + "= ?", arrayOf<String>(id))
+
+                Log.d("mLog", "update rows count = " + updCount)
+            }
+            R.id.btnDel -> {
+                if (id.equals("")) {
+                    return
+                }
+                var delCount: Int = database.delete(DBHelper.TABLE_CONTACTS,
+                                        DBHelper.KEY_ID + "= " + id, null)
+                Log.d("mLog", "deleted rows count = " + delCount)
             }
         }
         dbHelper.close()
